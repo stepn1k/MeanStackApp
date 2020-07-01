@@ -42,5 +42,4 @@ export class PostService {
     this.posts.push(newPost);
     this.postsChanged.next(this.posts);
   }
-
 }
