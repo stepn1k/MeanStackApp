@@ -1,5 +1,6 @@
 <mat-card>
-  <form #postForm="ngForm" (submit)="onAddPost(postForm)">
+  <mat-spinner diameter="65" *ngIf="isLoading"></mat-spinner>
+  <form #postForm="ngForm" (submit)="onAddPost(postForm)" *ngIf="!isLoading">
     <mat-form-field hideRequiredMarker>
       <mat-label>Post Title</mat-label>
       <input matInput name="title" #title="ngModel" [ngModel]="post?.title" minlength="3" required>
@@ -13,7 +14,7 @@
     </mat-form-field>
     <button mat-raised-button color="primary" type="submit"
             [disabled]="postForm.invalid">
-      Save Post
+      {{mode === "create" ? "Save Post" : "Update Post"}}
     </button>
   </form>
 </mat-card>
