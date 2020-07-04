@@ -26,11 +26,23 @@ export class PostService {
 
   addPost(title: string, content: string) {
     const newPost = {_id: null, title, content};
-    this.http.post('http://localhost:3000/api/posts', newPost)
-      .subscribe(() => {
+    this.http.post<{ message: string, postId: string }>('http://localhost:3000/api/posts', newPost)
+      .subscribe((resData) => {
+        newPost._id = resData.postId;
         this.posts.push(newPost);
         this.postsChanged.next(this.posts);
       });
-
   }
+
+  deletePost(id: string) {
+    const postId = this.posts.findIndex(post => post._id === id);
+
+    this.http.delete(`http://localhost:3000/api/posts/` + id).subscribe(
+      () => {
+        this.posts.splice(postId, 1);
+        this.postsChanged.next(this.posts);
+      }
+    );
+  }
+
 }
