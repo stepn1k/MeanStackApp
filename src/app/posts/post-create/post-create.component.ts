@@ -15,7 +15,7 @@ export class PostCreateComponent implements OnInit {
   form: FormGroup;
 
   mode = 'create';
-  private postId: string;
+  private postId: string = null;
   post: Post;
   imagePreview: string;
   isLoading = false;
@@ -26,54 +26,43 @@ export class PostCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form = new FormGroup({
-      title: new FormControl(
-        null,
-        {
-          validators: [Validators.required, Validators.minLength(3)]
-        }),
-      content: new FormControl(
-        null,
-        [Validators.required]),
-      image: new FormControl(
-        null,
-        {
-          validators: [Validators.required],
-          asyncValidators: [mimeTypes]
-        })
-    });
+    this.form = new FormGroup(
+      {
+        title: new FormControl(null, {validators: [Validators.required, Validators.minLength(3)]}),
+        content: new FormControl(null, [Validators.required]),
+        image: new FormControl(null, {validators: [Validators.required], asyncValidators: [mimeTypes]})
+      }
+    );
 
+    // check current mode
     this.route.paramMap.subscribe(
       (paramMap: ParamMap) => {
+        // if edit mode
         if (paramMap.has('postId')) {
           this.mode = 'edit';
           this.postId = paramMap.get('postId');
           this.isLoading = true;
           this.postService.getPost(this.postId).subscribe(
             (postData) => {
-              this.post = {
-                _id: postData._id,
-                title: postData.title,
-                content: postData.content
-              };
+              const {_id, title, content, imagePath} = postData;
+              this.post = {_id, title, content, imagePath};
               this.isLoading = false;
               // init form values
-              this.form.setValue(
-                {title: this.post.title, content: this.post.content}
-              );
+              this.form.setValue({
+                title: this.post.title,
+                content: this.post.content,
+                image: this.post.imagePath
+              });
             });
         } else {
           this.mode = 'create';
-          this.postId = null;
         }
       }
     );
   }
 
-
   onImagePicked(event: Event) {
     const file = (event.target as HTMLInputElement).files[0];
-
     this.form.patchValue({image: file});
     this.form.get('image').updateValueAndValidity();
     // image preview reader
@@ -88,14 +77,12 @@ export class PostCreateComponent implements OnInit {
     if (this.form.invalid) {
       return;
     }
-
-    const {title, content} = this.form.value;
-
+    const {title, content, image} = this.form.value;
     if (this.mode === 'create') {
-      this.postService.addPost(title, content);
+      this.postService.addPost(title, content, image);
       this.isLoading = true;
     } else {
-      this.postService.updatePost(this.postId, title, content);
+      this.postService.updatePost(this.postId, title, content, image);
     }
   }
 }

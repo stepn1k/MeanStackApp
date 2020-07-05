@@ -1,12 +1,16 @@
 import {AbstractControl} from '@angular/forms';
-import {Observable, Observer} from 'rxjs';
+import {Observable, Observer, of} from 'rxjs';
 
 // https://stackoverflow.com/questions/18299806/how-to-check-file-mime-type-with-javascript-before-upload
 
 export const mimeTypes = (control: AbstractControl): Promise<{ [key: string]: any }> | Observable<{ [key: string]: any }> => {
+  // return if we entered in edit mode
+  if (typeof control.value === 'string') {
+    return of(null);
+  }
   const file = control.value as File;
   const fileReader = new FileReader();
-  const fileReaderObservable = Observable.create((observer: Observer<{ [key: string]: any }>) => {
+  return Observable.create((observer: Observer<{ [key: string]: any }>) => {
     fileReader.addEventListener('loadend', () => {
       const arr = new Uint8Array(fileReader.result as ArrayBuffer).subarray(0, 4);
       let header = '';
@@ -40,5 +44,4 @@ export const mimeTypes = (control: AbstractControl): Promise<{ [key: string]: an
     });
     fileReader.readAsArrayBuffer(file);
   });
-  return fileReaderObservable;
 };
