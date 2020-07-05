@@ -3,9 +3,31 @@ mat-card {
 
   mat-form-field {
     display: block;
+
+    textarea {
+      line-height: 1.25rem;
+    }
+  }
+
+  mat-spinner {
+    margin: auto;
   }
 }
 
-mat-spinner {
-  margin: auto;
+
+.image-picker {
+  margin-bottom: 0.4rem;
+
+  input[type="file"] {
+    visibility: hidden;
+  }
+}
+
+.image-preview {
+  margin: 1rem 0;
+  height: 5rem;
+
+  img {
+    height: 100%;
+  }
 }
