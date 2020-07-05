@@ -15,13 +15,29 @@ router.delete("/:id", (req, res) => {
 // ---- GET All ---- //
 
 router.get("", (req, res) => {
-  Post.find().then(posts => {
+  // query params
+  let pageSize = +req.query.size;
+  let page = +req.query.page;
+  const postQuery = Post.find();
+  let fetchedPosts;
+  if (pageSize && page) {
+    postQuery
+      .skip(pageSize * (page - 1))
+      .limit(pageSize)
+  }
+
+  postQuery.then(posts => {
+      fetchedPosts = posts;
+      return Post.countDocuments()
+    }
+  ).then(count => {
       res.status(200).json({
         message: "Success",
-        posts: posts
+        posts: fetchedPosts,
+        count
       });
     }
-  ).catch(err => console.log(err));
+  );
 });
 
 // ---- GET One---- //

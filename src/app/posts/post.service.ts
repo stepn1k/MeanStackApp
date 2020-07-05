@@ -9,19 +9,20 @@ import {Router} from '@angular/router';
 })
 export class PostService {
   private posts: Post[] = [];
-  postsChanged = new Subject<Post[]>();
+  postsChanged = new Subject<{ posts: Post[], count: number }>();
 
   constructor(private http: HttpClient, private router: Router) {
   }
 
   // ---- GET All ---- //
-  getPosts() {
-    this.http.get<{ message: string, posts: Post[] }>
-    ('http://localhost:3000/api/posts')
+  getPosts(currentPage: number, pageSize: number) {
+    const queryParams = `?page=${currentPage}&size=${pageSize}`;
+    this.http.get<{ message: string, posts: Post[], count: number }>
+    ('http://localhost:3000/api/posts' + queryParams)
       .subscribe(
         (data) => {
           this.posts = data.posts;
-          this.postsChanged.next([...this.posts]);
+          this.postsChanged.next({posts: [...this.posts], count: data.count});
         }
       );
   }
@@ -34,13 +35,7 @@ export class PostService {
   // ---- DELETE ---- //
   deletePost(id: string) {
     const postId = this.posts.findIndex(post => post._id === id);
-
-    this.http.delete(`http://localhost:3000/api/posts/` + id).subscribe(
-      () => {
-        this.posts.splice(postId, 1);
-        this.postsChanged.next(this.posts);
-      }
-    );
+    return this.http.delete(`http://localhost:3000/api/posts/` + id);
   }
 
   // ---- POST ---- //
@@ -54,15 +49,6 @@ export class PostService {
     this.http.post<{ message: string, post: Post }>
     ('http://localhost:3000/api/posts', postData)
       .subscribe((resData) => {
-
-        const {_id, title, content, imagePath} = resData.post;
-
-        const savedPost: Post = {
-          _id, title, content, imagePath
-        };
-
-        this.posts.push(savedPost);
-        this.postsChanged.next(this.posts);
         this.router.navigate(['/']);
       });
   }
@@ -84,11 +70,6 @@ export class PostService {
     this.http.put<{ message: string, updatedPost: Post }>(`http://localhost:3000/api/posts/` + _id, postData)
       .subscribe(
         (res) => {
-          const postId = this.posts.findIndex(p => p._id === _id);
-          const updatedPosts = [...this.posts];
-          updatedPosts[postId] = res.updatedPost;
-          this.posts = updatedPosts;
-          this.postsChanged.next(this.posts);
           this.router.navigate(['/']);
         }
       );
