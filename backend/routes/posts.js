@@ -3,6 +3,7 @@ const Post = require("../models/post");
 const multer = require("multer");
 const storageConfig = require("./image-storage-congif");
 const router = express.Router();
+const moment = require('moment');
 
 // ---- DELETE ---- //
 
@@ -64,10 +65,9 @@ router.post("",
     // http://localhost:3000/images/example
     const imagePath = url + "/images/" + req.file.filename;
     const {title, content} = req.body;
-
+    const updatedDate = moment().format('MMMM Do YYYY, h:mm:ss a');
     // post for Save
-    const post = new Post({title, content, imagePath});
-
+    const post = new Post({title, content, imagePath, updatedDate});
     post.save().then(
       savedPost => {
         res.status(201).json({
@@ -89,8 +89,9 @@ router.put("/:id",
       const url = req.protocol + "://" + req.get("host");
       imagePath = url + "/images/" + req.file.filename;
     }
+    const updatedDate = moment().format('MMMM Do YYYY, h:mm:ss a');
+    const updatedPost = new Post({_id, title, content, imagePath, updatedDate});
 
-    const updatedPost = new Post({_id, title, content, imagePath});
     Post.updateOne({_id}, updatedPost).then(
       () => {
         res.status(200).json({message: "Update successful", updatedPost})
