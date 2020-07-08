@@ -34,7 +34,6 @@ export class PostService {
 
   // ---- DELETE ---- //
   deletePost(id: string) {
-    const postId = this.posts.findIndex(post => post._id === id);
     return this.http.delete(`http://localhost:3000/api/posts/` + id);
   }
 

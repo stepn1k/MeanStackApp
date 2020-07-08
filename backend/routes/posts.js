@@ -1,16 +1,25 @@
 const express = require('express');
 const Post = require("../models/post");
 const multer = require("multer");
-const storageConfig = require("./image-storage-congif");
+const storageConfig = require("../storage/congif");
+const storageCleaner = require("../storage/cleaner");
 const router = express.Router();
 const moment = require('moment');
 
 // ---- DELETE ---- //
 
 router.delete("/:id", (req, res) => {
-  Post.deleteOne({_id: req.params.id}).then(
-    () => res.status(200).json({message: "Success"})
+  Post.findById(req.params.id).then(
+    post => {
+      //delete file
+      storageCleaner(post);
+      // delete post document
+      Post.deleteOne({_id: req.params.id}).then(
+        () => res.status(200).json({message: "Success"})
+      );
+    }
   );
+
 });
 
 // ---- GET All ---- //

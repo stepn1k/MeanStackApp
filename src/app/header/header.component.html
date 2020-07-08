@@ -1,11 +1,16 @@
 <mat-toolbar color="primary">
   <span>Post Creator</span>
   <span class="spacer"></span>
-  <button mat-icon-button routerLink="" matTooltip="All Posts">
-    <mat-icon>view_list</mat-icon>
-  </button>
-  <button mat-icon-button routerLink="/create" matTooltip="Create new Post">
-    <mat-icon>post_add</mat-icon>
-  </button>
+  <div>
+    <button mat-icon-button routerLink="/auth" matTooltip="Authorization">
+      <mat-icon>login</mat-icon>
+    </button>
+    <button mat-icon-button routerLink="" matTooltip="All Posts">
+      <mat-icon>view_list</mat-icon>
+    </button>
+    <button mat-icon-button routerLink="/create" matTooltip="Create new Post">
+      <mat-icon>post_add</mat-icon>
+    </button>
+  </div>
 </mat-toolbar>
 
