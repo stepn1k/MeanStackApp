@@ -4,11 +4,12 @@ const multer = require("multer");
 const storageConfig = require("../storage/congif");
 const storageCleaner = require("../storage/cleaner");
 const router = express.Router();
+const checkAuth = require("../middleware/check-auth");
 const moment = require('moment');
 
 // ---- DELETE ---- //
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", checkAuth, (req, res) => {
   Post.findById(req.params.id).then(
     post => {
       //delete file
@@ -67,6 +68,7 @@ router.get('/:id', (req, res) => {
 // ---- POST ---- //
 
 router.post("",
+  checkAuth,
   // get image from input FormData and uploaded to storage
   multer({storage: storageConfig}).single("image"),
   (req, res) => {
@@ -90,6 +92,7 @@ router.post("",
 // ---- PUT ---- //
 
 router.put("/:id",
+  checkAuth,
   multer({storage: storageConfig}).single("image"),
   (req, res) => {
     let {imagePath, _id, title, content} = req.body;
@@ -106,6 +109,7 @@ router.put("/:id",
         res.status(200).json({message: "Update successful", updatedPost})
       }
     ).catch(err => console.log(err));
-  });
+  }
+);
 
 module.exports = router;

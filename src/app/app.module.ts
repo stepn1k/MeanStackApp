@@ -8,9 +8,10 @@ import {MaterialModule} from './material/material.module';
 import {HeaderComponent} from './header/header.component';
 import {PostListComponent} from './posts/post-list/post-list.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {AppRoutingModule} from './app-routing.module';
-import {LoginComponent} from './auth/login/login.component';
+import {AuthComponent} from './auth/auth.component';
+import {AuthInterceptor} from './auth/auth-iterceptor';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,7 @@ import {LoginComponent} from './auth/login/login.component';
     PostCreateComponent,
     HeaderComponent,
     PostListComponent,
-    LoginComponent
+    AuthComponent
   ],
   imports: [
     BrowserModule,
@@ -29,7 +30,13 @@ import {LoginComponent} from './auth/login/login.component';
     ReactiveFormsModule,
     FormsModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

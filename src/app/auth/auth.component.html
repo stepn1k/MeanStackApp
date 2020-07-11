@@ -1,5 +1,6 @@
 <mat-card>
-  <form (submit)="onLogin(loginForm)" #loginForm="ngForm">
+  <mat-spinner *ngIf="isLoading" diameter="65"></mat-spinner>
+  <form (submit)="onLogin(loginForm)" #loginForm="ngForm" *ngIf="!isLoading">
     <mat-form-field hideRequiredMarker>
       <mat-label>E-Mail</mat-label>
       <input
@@ -26,9 +27,17 @@
       >
       <mat-error *ngIf="password.invalid">Please enter a valid password.</mat-error>
     </mat-form-field>
-    <div>
+    <div class="button-group">
       <button mat-raised-button color="primary" type="submit">
-        Login
+        {{isLogin ? "Login" : "Sign Up"}}
+      </button>
+      <div class="spacer"></div>
+      <button
+        mat-stroked-button
+        color="basic"
+        type="button"
+        (click)="switchMode()">
+        Switch to {{isLogin ? "Sign Up" : "Login"}}
       </button>
     </div>
   </form>

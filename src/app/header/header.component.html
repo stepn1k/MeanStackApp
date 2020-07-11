@@ -2,13 +2,19 @@
   <span>Post Creator</span>
   <span class="spacer"></span>
   <div>
-    <button mat-icon-button routerLink="/auth" matTooltip="Authorization">
+    <button *ngIf="isAuthenticated" mat-icon-button matTooltip="Logout"
+            (click)="onLogout()">
+      <!--LOGOUT-->
       <mat-icon>login</mat-icon>
+    </button>
+    <button *ngIf="!isAuthenticated" mat-icon-button routerLink="/auth" matTooltip="Login">
+      <!--Need Login-->
+      <mat-icon>person</mat-icon>
     </button>
     <button mat-icon-button routerLink="" matTooltip="All Posts">
       <mat-icon>view_list</mat-icon>
     </button>
-    <button mat-icon-button routerLink="/create" matTooltip="Create new Post">
+    <button *ngIf="isAuthenticated" mat-icon-button routerLink="/create" matTooltip="Create new Post">
       <mat-icon>post_add</mat-icon>
     </button>
   </div>
