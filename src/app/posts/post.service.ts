@@ -55,7 +55,7 @@ export class PostService {
   // ---- PUT ---- //
   // tslint:disable-next-line:variable-name
   updatePost(_id: string, title: string, content: string, image: File | string) {
-    let postData;
+    let postData: Post | FormData;
 
     if (typeof (image) === 'object') { // if image was updated
       postData = new FormData();
@@ -64,7 +64,7 @@ export class PostService {
       postData.append('content', content);
       postData.append('image', image, title);
     } else { // image was not updated
-      postData = {_id, title, content, imagePath: image};
+      postData = {_id, title, content, imagePath: image, creator: null};
     }
     this.http.put<{ message: string, updatedPost: Post }>(`http://localhost:3000/api/posts/` + _id, postData)
       .subscribe(

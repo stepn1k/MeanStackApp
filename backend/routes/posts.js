@@ -10,14 +10,21 @@ const moment = require('moment');
 // ---- DELETE ---- //
 
 router.delete("/:id", checkAuth, (req, res) => {
+  let postForStorageDeletion;
   Post.findById(req.params.id).then(
     post => {
-      //delete file
-      storageCleaner(post);
+      postForStorageDeletion = post;
       // delete post document
-      Post.deleteOne({_id: req.params.id}).then(
-        () => res.status(200).json({message: "Success"})
-      );
+      Post.deleteOne({_id: req.params.id, creator: req.userData.userId}).then(
+        (result) => {
+          if (result.n) {
+            //delete file
+            storageCleaner(post);
+            res.status(200).json({message: "Deletion successful"})
+          } else {
+            res.status(400).json({message: "You don't have access to this post!"})
+          }
+        });
     }
   );
 
@@ -78,7 +85,13 @@ router.post("",
     const {title, content} = req.body;
     const updatedDate = moment().format('MMMM Do YYYY, h:mm:ss a');
     // post for Save
-    const post = new Post({title, content, imagePath, updatedDate});
+    const post = new Post({
+      title,
+      content,
+      imagePath,
+      updatedDate,
+      creator: req.userData.userId
+    });
     post.save().then(
       savedPost => {
         res.status(201).json({
@@ -102,13 +115,17 @@ router.put("/:id",
       imagePath = url + "/images/" + req.file.filename;
     }
     const updatedDate = moment().format('MMMM Do YYYY, h:mm:ss a');
-    const updatedPost = new Post({_id, title, content, imagePath, updatedDate});
+    const updatedPost = new Post({_id, title, content, imagePath, updatedDate, creator: req.userData.userId});
 
-    Post.updateOne({_id}, updatedPost).then(
-      () => {
-        res.status(200).json({message: "Update successful", updatedPost})
+    Post.updateOne({_id, creator: req.userData.userId}, updatedPost).then(
+      (result) => {
+        if (result.nModified) {
+          res.status(200).json({message: "Update successful", updatedPost})
+        } else {
+          res.status(400).json({message: "You don't have access to this post!"})
+        }
       }
-    ).catch(err => console.log(err));
+    )
   }
 );
 

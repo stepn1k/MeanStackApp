@@ -52,7 +52,8 @@ router.post("/login", (req, res) => {
     );
     res.status(200).json({
       token,
-      expiresIn: 3600000 // 1h
+      expiresIn: 3600000, // 1h
+      userId: fetchedUsed._id
     })
   }).catch(err => res.status(401).json({message: "Auth Failed"}))
 });

@@ -30,7 +30,10 @@ export class AuthComponent implements OnInit {
     this.isLoading = true;
     // signUP
     if (!this.isLogin) {
-      this.authService.createUser(email, password);
+      this.authService.createUser(email, password).subscribe(() => {
+        this.isLoading = false;
+        this.isLogin = true;
+      });
     } else {
       // login
       this.authService.login(email, password);
