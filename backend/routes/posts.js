@@ -55,7 +55,9 @@ router.get("", (req, res) => {
         count
       });
     }
-  );
+  ).catch(err => res.status(400).json({
+    message: "Fetching posts failed!"
+  }));
 });
 
 // ---- GET One---- //
@@ -69,7 +71,9 @@ router.get('/:id', (req, res) => {
         res.status(404).json({message: "Post not found!"})
       }
     }
-  )
+  ).catch(err => res.status(400).json({
+    message: "Fetching post failed!"
+  }))
 });
 
 // ---- POST ---- //
@@ -125,7 +129,11 @@ router.put("/:id",
           res.status(400).json({message: "You don't have access to this post!"})
         }
       }
-    )
+    ).catch(err => {
+      res.status(401).json({
+        message: "Couldn't update post!"
+      })
+    })
   }
 );
 

@@ -12,6 +12,7 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {AppRoutingModule} from './app-routing.module';
 import {AuthComponent} from './auth/auth.component';
 import {AuthInterceptor} from './auth/auth-iterceptor';
+import {ErrorInterceptor} from './error-interceptor';
 
 @NgModule({
   declarations: [
@@ -28,14 +29,19 @@ import {AuthInterceptor} from './auth/auth-iterceptor';
     HttpClientModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    }
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+    },
   ],
   bootstrap: [AppComponent]
 })
