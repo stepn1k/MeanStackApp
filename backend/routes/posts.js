@@ -1,6 +1,5 @@
 const express = require('express');
-const multer = require("multer");
-const storageConfig = require("../storage/congif");
+const extractFile = require("../storage/congif");
 const router = express.Router();
 const checkAuth = require("../middleware/check-auth");
 const PostController = require("../controllers/posts");
@@ -14,14 +13,13 @@ router.get('/:id', PostController.getPost);
 
 router.post("",
   checkAuth,
-  // get image from input FormData and uploaded to storage
-  multer({storage: storageConfig}).single("image"),
+  extractFile,
   PostController.createPost
 );
 
 router.put("/:id",
   checkAuth,
-  multer({storage: storageConfig}).single("image"),
+  extractFile,
   PostController.updatePost
 );
 
