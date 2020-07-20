@@ -3,6 +3,10 @@ import {Post} from './post.model';
 import {Subject} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
+import {environment} from '../../environments/environment';
+
+
+const BACKEND_PATH = environment.baseUrl + '/posts';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +22,7 @@ export class PostService {
   getPosts(currentPage: number, pageSize: number) {
     const queryParams = `?page=${currentPage}&size=${pageSize}`;
     this.http.get<{ message: string, posts: Post[], count: number }>
-    ('http://localhost:3000/api/posts' + queryParams)
+    (BACKEND_PATH + queryParams)
       .subscribe(
         (data) => {
           this.posts = data.posts;
@@ -29,12 +33,12 @@ export class PostService {
 
   // ---- GET One ---- //
   getPost(id: string) {
-    return this.http.get<Post>('http://localhost:3000/api/posts/' + id);
+    return this.http.get<Post>(`${BACKEND_PATH}/` + id);
   }
 
   // ---- DELETE ---- //
   deletePost(id: string) {
-    return this.http.delete(`http://localhost:3000/api/posts/` + id);
+    return this.http.delete(`${BACKEND_PATH}/` + id);
   }
 
   // ---- POST ---- //
@@ -46,7 +50,7 @@ export class PostService {
     postData.append('image', formImage, formTitle);
 
     this.http.post<{ message: string, post: Post }>
-    ('http://localhost:3000/api/posts', postData)
+    (BACKEND_PATH, postData)
       .subscribe((resData) => {
         this.router.navigate(['/']);
       });
@@ -66,7 +70,7 @@ export class PostService {
     } else { // image was not updated
       postData = {_id, title, content, imagePath: image, creator: null};
     }
-    this.http.put<{ message: string, updatedPost: Post }>(`http://localhost:3000/api/posts/` + _id, postData)
+    this.http.put<{ message: string, updatedPost: Post }>(`${BACKEND_PATH}/` + _id, postData)
       .subscribe(
         (res) => {
           this.router.navigate(['/']);

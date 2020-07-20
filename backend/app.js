@@ -9,7 +9,7 @@ const app = express();
 
 // connect to MongoDB
 mongoose.connect(
-  "mongodb+srv://Stepan:kCv05LguSRoVZsIW@meanstack.lyoix.mongodb.net/node-angular?retryWrites=true&w=majority",
+  `mongodb+srv://Stepan:${process.env.MONGO_ATLAS_PW}@meanstack.lyoix.mongodb.net/node-angular?retryWrites=true&w=majority`,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -19,7 +19,8 @@ mongoose.connect(
   .then(() => {
     console.log("Connected to DataBase!")
   })
-  .catch(() => {
+  .catch((err) => {
+    console.log(err);
     console.log("Connection Failed")
   });
 

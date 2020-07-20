@@ -51,7 +51,7 @@ exports.loginUser = (req, res) => {
     // init token
     const token = jwt.sign(
       {email, userId: fetchedUsed._id},
-      "long_secret_key",
+      process.env.JWT_KEY,
       {expiresIn: '1h'}
     );
     //send response
